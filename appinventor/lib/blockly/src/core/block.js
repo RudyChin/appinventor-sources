@@ -337,6 +337,21 @@ Blockly.Block.prototype.select = function() {
   Blockly.selected = this;
   this.svg_.addSelect();
   Blockly.fireUiEvent(this.workspace.getCanvas(), 'blocklySelectChange');
+  //Layer
+  //this.rendered=false
+  //this.setCollapsed(true);
+  //var xmlBlock = Blockly.Xml.blockToDom_(this);
+  //console.log("text: "+Blockly.Xml.domToPrettyText(xmlBlock));
+  /*document.getElementById("layerbox").style.position="absolute";
+  document.getElementById("layerbox").style.width="13%";
+  document.getElementById("layerbox").style.height="80%";
+  document.getElementById("layerbox").style.z-index="100";
+  document.getElementById("layerbox").style.left="85%";
+  document.getElementById("layerbox").style.top="1%";
+  document.getElementById("layerbox").style.background="#b0c4de";*/
+  //for layer debuging
+  //console.log("ID:"+this.id+" this.layerLabel:"+this.layerLabel);
+  //console.log(Blockly.haslayerbox);
 };
 
 /**
