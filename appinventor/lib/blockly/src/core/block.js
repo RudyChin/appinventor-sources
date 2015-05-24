@@ -1609,14 +1609,11 @@ Blockly.Block.prototype.setLayerLabel = function(layerName) {
   for (var x = 0, input; input = this.inputList[x]; x++) {//?
     if (input.connection) {
       var child = input.connection.targetBlock();
-      if (child) child.setLayerLabel(layerName);
-	  
-      }
+      if (child) child.setLayerLabel(layerName);  
     }
   }
   if(Blockly.haslayerbox) Blockly.LayerBoxUpdate();
-  
-}
+};
 
 /**
  * Get whether the block is collapsed or not.
