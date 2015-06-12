@@ -22,6 +22,7 @@ Blockly.LayerBoxInit = function() {//initialize layerbox
     layerboxhide.height = '12';
     layerboxhide.setAttribute('onclick', ('Blockly.ShowLayerBoxContent();'));
     layerboxhide.setAttribute('style', 'position:absolute; left:50%; top:1%;');
+	layerboxhide.setAttribute('title', 'Minimize');
     layerboxtitle.appendChild(layerboxhide);
 
     var layerexport = document.createElement('input');
@@ -30,6 +31,7 @@ Blockly.LayerBoxInit = function() {//initialize layerbox
     layerexport.height = '12';
     //layerboxhide.setAttribute('onclick', ('Blockly.ShowLayerBoxContent();'));
     layerexport.setAttribute('style', 'position:absolute; left:60%; top:1%;');
+	layerexport.setAttribute('title', 'Export the layer');
     layerboxtitle.appendChild(layerexport);
 
     var layerimport = document.createElement('input');
@@ -38,8 +40,9 @@ Blockly.LayerBoxInit = function() {//initialize layerbox
     layerimport.height = '12';
     //layerboxhide.setAttribute('onclick', ('Blockly.ShowLayerBoxContent();'));
     layerimport.setAttribute('style', 'position:absolute; left:70%; top:1%;');
+	layerimport.setAttribute('title', 'Import the layer');
     layerboxtitle.appendChild(layerimport);
-
+    
     var layerboxcontent = document.createElement('div')
     layerboxcontent.id = 'layerboxcontent';
     layerboxcontent.setAttribute('style', 'background-color:rgb(202,220,169); visibility:visible; overflow:auto');
@@ -96,6 +99,7 @@ Blockly.LayerBoxUpdate = function() {//update layerbox if there's any change for
           else{
             image.src = Blockly.CheckView(name);
           }
+		  image.setAttribute('title', 'Show/Hide layer');
           x.appendChild(image);
           x.setAttribute('selected', Blockly.CheckSelect(name));
           x.setAttribute('onclick', ('Blockly.LayerViewer(this.id);'));
@@ -104,14 +108,16 @@ Blockly.LayerBoxUpdate = function() {//update layerbox if there's any change for
           x.setAttribute('id', llist[i]);
           var image = document.createElement("img");
           image.src = 'media/copy.gif';
+		  image.setAttribute('title', 'Duplicate layer');
           x.appendChild(image);
           x.setAttribute('onclick', ('Blockly.DuplicateByLayer(this.id);'));
         }
-        else if(j == 2){//diable by layer
+        else if(j == 2){//disable by layer
           x.setAttribute('id', llist[i] + "disabled");
           x.setAttribute('name', llist[i]);
           var image = document.createElement("img");
           image.src = 'media/red.gif';
+		  image.setAttribute('title', 'Enable/Disable layer');
           x.appendChild(image);
           x.setAttribute('selected', false);
           x.setAttribute('onclick', ('Blockly.DisableByLayer(this.id);'));
@@ -121,6 +127,7 @@ Blockly.LayerBoxUpdate = function() {//update layerbox if there's any change for
           x.setAttribute('name', llist[i]);
           var image = document.createElement("img");
           image.src = 'media/min.gif';
+		  image.setAttribute('title', 'Collapse/Expand layer');
           x.appendChild(image);
           x.setAttribute('selected', false);
           x.setAttribute('onclick', ('Blockly.CollapseByLayer(this.id);'));
@@ -141,18 +148,21 @@ Blockly.LayerBoxUpdate = function() {//update layerbox if there's any change for
   layerboxcontent.appendChild(layerother);
   layerother.appendChild(t);
   layerother.setAttribute('onclick', ('Blockly.doshowLayerBlockwithother();'));
-
+  layerother.setAttribute('title', 'Show Layer Block with Others');
+  
   var sortbylayer = document.createElement('BUTTON');
   var t = document.createTextNode('SBL');
   layerboxcontent.appendChild(sortbylayer);
   sortbylayer.appendChild(t);
   sortbylayer.setAttribute('onclick', ('Blockly.dosortByLayerLabel();'));
-
+  sortbylayer.setAttribute('title', 'Sort By Layer Label');
+  
   var sortbyc = document.createElement('BUTTON');
   var t = document.createTextNode('SBC');
   layerboxcontent.appendChild(sortbyc);
   sortbyc.appendChild(t);
   sortbyc.setAttribute('onclick', ('Blockly.dosortByC();'));  
+  sortbyc.setAttribute('title', 'Sort By Category');  
 }
 
 Blockly.CheckView = function (name){
@@ -227,6 +237,7 @@ Blockly.LayerViewer = function(id){//dicide how to show by layerlabel
     x.innerHTML = "";
     var image = document.createElement("img");
     image.src = 'media/eye.gif';
+	image.setAttribute('title', 'Show/Hide layer');
     x.appendChild(image);
     
     if(Blockly.LayerView.indexOf(name) == -1){//avoid repeat
@@ -238,6 +249,7 @@ Blockly.LayerViewer = function(id){//dicide how to show by layerlabel
     x.innerHTML = "";
     var image = document.createElement("img");
     image.src = 'media/closedeye.gif';
+	image.setAttribute('title', 'Show/Hide layer');
     x.appendChild(image);
 
     for(var i = 0; i<Blockly.LayerView.length; i++){
@@ -276,6 +288,7 @@ Blockly.DisableByLayer = function(id) {//disable by layer
         x.innerHTML = "";
         var image = document.createElement("img");
         image.src = 'media/green.gif';
+		image.setAttribute('title', 'Enable/Disable layer');
         x.appendChild(image);
         topblocks[j].setDisabled(true);
       }
@@ -284,6 +297,7 @@ Blockly.DisableByLayer = function(id) {//disable by layer
         x.innerHTML = "";
         var image = document.createElement("img");
         image.src = 'media/red.gif';
+		image.setAttribute('title', 'Enable/Disable layer');
         x.appendChild(image);
         topblocks[j].setDisabled(false);
       }
@@ -304,6 +318,7 @@ Blockly.CollapseByLayer = function(id) {//collapse by layer
         x.innerHTML = "";
         var image = document.createElement("img");
         image.src = 'media/max.gif';
+		image.setAttribute('title', 'Collapse/Expand layer');
         x.appendChild(image);
         topblocks[j].setCollapsed(true);
       }
@@ -312,6 +327,7 @@ Blockly.CollapseByLayer = function(id) {//collapse by layer
         x.innerHTML = "";
         var image = document.createElement("img");
         image.src = 'media/min.gif';
+		image.setAttribute('title', 'Collapse/Expand layer');
         x.appendChild(image);
       	topblocks[j].setCollapsed(false);
       }
