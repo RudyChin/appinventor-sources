@@ -34,6 +34,8 @@ goog.require('Blockly.Connection');
 goog.require('Blockly.ContextMenu');
 goog.require('Blockly.ErrorIcon');
 goog.require('Blockly.Input');
+//layer
+goog.require('Blockly.Layer');
 goog.require('Blockly.Msg');
 goog.require('Blockly.Mutator');
 goog.require('Blockly.Warning');
@@ -139,6 +141,8 @@ Blockly.Block.prototype.fill = function(workspace, prototypeName) {
   this.inputList = [];
   this.inputsInline = false;
   this.rendered = false;
+  //layer
+  this.layerLabel = null;
   this.disabled = false;
   this.tooltip = '';
   this.contextMenu = true;
@@ -333,6 +337,21 @@ Blockly.Block.prototype.select = function() {
   Blockly.selected = this;
   this.svg_.addSelect();
   Blockly.fireUiEvent(this.workspace.getCanvas(), 'blocklySelectChange');
+  //Layer
+  //this.rendered=false
+  //this.setCollapsed(true);
+  //var xmlBlock = Blockly.Xml.blockToDom_(this);
+  //console.log("text: "+Blockly.Xml.domToPrettyText(xmlBlock));
+  /*document.getElementById("layerbox").style.position="absolute";
+  document.getElementById("layerbox").style.width="13%";
+  document.getElementById("layerbox").style.height="80%";
+  document.getElementById("layerbox").style.z-index="100";
+  document.getElementById("layerbox").style.left="85%";
+  document.getElementById("layerbox").style.top="1%";
+  document.getElementById("layerbox").style.background="#b0c4de";*/
+  //for layer debuging
+  //console.log("ID:"+this.id+" this.layerLabel:"+this.layerLabel);
+  //console.log(Blockly.haslayerbox);
 };
 
 /**
@@ -853,6 +872,22 @@ Blockly.Block.prototype.showContextMenu_ = function(e) {
     block.showHelp_();
   };
   options.push(helpOption);
+  
+// Layer: Option to group block to layer.
+  var layerOption = {enabled: 1};
+  layerOption.text = "Layer";
+  layerOption.callback = function(){
+    if(block.layerLabel!=null){
+      var layerName=prompt("Please enter the Layer Label",block.layerLabel);
+    }
+    else{
+      var layerName=prompt("Please enter the Layer Label","Layer" + (Blockly.GetLayerList().length + 1));
+    }
+    if (layerName!=null){
+      block.setLayerLabel(layerName);
+    }
+  };
+  options.push(layerOption);
 
   // Allow the block to add or modify options.
   if (this.customContextMenu && !block.isInFlyout) {
@@ -1556,6 +1591,28 @@ Blockly.Block.prototype.getInheritedDisabled = function() {
       return true;
     }
   }
+};
+
+/**
+ * Set LayerLabel
+ * @param {string}.
+ */
+Blockly.Block.prototype.setLayerLabel = function(layerName) {
+  //console.log("setLayerLabel to "+layerName)
+  if(layerName!=''){
+    this.layerLabel = layerName;
+  }
+  else{
+    this.layerLabel = null; 
+  }
+  this.workspace.fireChangeEvent();
+  for (var x = 0, input; input = this.inputList[x]; x++) {//?
+    if (input.connection) {
+      var child = input.connection.targetBlock();
+      if (child) child.setLayerLabel(layerName);  
+    }
+  }
+  if(Blockly.haslayerbox) Blockly.LayerBoxUpdate();
 };
 
 /**
