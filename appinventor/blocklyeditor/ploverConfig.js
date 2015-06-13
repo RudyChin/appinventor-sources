@@ -41,6 +41,8 @@
     '../lib/blockly/src/core/icon.js',
     '../lib/blockly/src/core/inject.js',
     '../lib/blockly/src/core/input.js',
+	//Layer
+    '../lib/blockly/src/core/layer.js',
     '../lib/blockly/src/core/msg.js',
     '../lib/blockly/src/core/mutator.js',
     '../lib/blockly/src/core/names.js',

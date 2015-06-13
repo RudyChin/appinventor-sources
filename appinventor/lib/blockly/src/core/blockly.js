@@ -44,6 +44,8 @@ goog.require('Blockly.FieldImage');
 goog.require('Blockly.FieldTextInput');
 goog.require('Blockly.FieldVariable');
 goog.require('Blockly.Generator');
+//Layer
+goog.require('Blockly.Layer');
 goog.require('Blockly.Msg');
 goog.require('Blockly.Procedures');
 goog.require('Blockly.Realtime');
@@ -593,7 +595,12 @@ Blockly.showContextMenu_ = function(e) {
       return (block.getFieldValue('NAME') || block.getFieldValue('PROCNAME'));
     return block.category;
   }
-
+  /** Layer
+   * 
+   */
+  function comparisonLayerLabel(block){
+    return block.layerLabel;
+  }
   /**
    * Function used to sort blocks by Category.
    * @param {!Blockly.Block} a first block to be compared
@@ -608,6 +615,26 @@ Blockly.showContextMenu_ = function(e) {
     else if (comparatorA > comparatorB) return +1;
     else return 0;
   }
+  /**Layer
+   * 
+   */
+  function sortByLayerLabel(a,b){
+    if(comparisonLayerLabel(a)){
+      var comparatorA = comparisonLayerLabel(a);
+    }
+    else{
+      var comparatorA = "zzz";
+    }
+    if(comparisonLayerLabel(b)){
+      var comparatorB = comparisonLayerLabel(b);
+    }
+    else{
+      var comparatorB = "zzz";
+    }
+	if (comparatorA < comparatorB) return -1;
+	else if (comparatorA > comparatorB) return +1;
+	else return 0;
+  }
 
   // Arranges block in layout (Horizontal or Vertical).
   function arrangeBlocks(layout) {
@@ -616,6 +643,47 @@ Blockly.showContextMenu_ = function(e) {
     // If the blocks are arranged by Category, sort the array
     if (Blockly.workspace_arranged_type === Blockly.BLKS_CATEGORY){
       topblocks.sort(sortByCategory);
+    }
+	//LAYER If the blocks are arranged by LayerLabel, sort the array
+    if (Blockly.workspace_arranged_type ==="SortByLayer"){//sort by LAYER
+      topblocks.sort(sortByLayerLabel);
+    }
+    if (Blockly.workspace_arranged_type ==="ShowLayer"){//pick up the layertoshow
+      var k=0
+      for (var j = 0; j < topblocks.length; j++) {
+        for (var i = 0; i < layertoshow.length; i++) {
+          if(layertoshow[i]===topblocks[j].layerLabel){
+            topblocks[j].setCollapsed(false);//expand the target
+            var temp=topblocks[j];
+            topblocks[j]=topblocks[k];
+            topblocks[k]=temp;
+            k++;
+            break;
+          }
+          else{
+            topblocks[j].setCollapsed(true);
+          }
+        }
+      }
+    }
+	//layer
+    if (Blockly.workspace_arranged_type ==="ShowLayerwithother"){//pick up the layertoshow
+      var k=0
+      for (var j = 0; j < topblocks.length; j++) {
+        for (var i = 0; i < layertoshow.length; i++) {
+          if(layertoshow[i]===topblocks[j].layerLabel){
+            topblocks[j].setCollapsed(false);//expand the target
+            var temp=topblocks[j];
+            topblocks[j]=topblocks[k];
+            topblocks[k]=temp;
+            k++;
+            break;
+          }
+          else{
+            topblocks[j].setCollapsed(true);
+          }
+        }
+      }
     }
     var metrics = Blockly.mainWorkspace.getMetrics();
     var viewLeft = metrics.viewLeft + 5;
@@ -667,6 +735,34 @@ Blockly.showContextMenu_ = function(e) {
           break;
       }
     }
+	//LAYER push the unselected away
+    if(Blockly.workspace_arranged_type ==="ShowLayer"){
+      var metrics = Blockly.mainWorkspace.getMetrics();
+      var viewLeft = metrics.viewLeft + 5;
+      var viewTop = metrics.viewTop + 5;
+      var x = viewLeft;
+      var y = viewTop;
+      var wsRight = viewLeft + metrics.viewWidth;
+      var wsBottom = viewTop + metrics.viewHeight;
+      for (var i = 0, len = topblocks.length; i < len; i++) {
+        var blk = topblocks[i];
+        if(blk.collapsed_==true){//collapsed means not the layer to show
+          switch (layout) {
+            case Blockly.BLKS_HORIZONTAL:
+              if (x < wsRight) {
+                blk.moveBy(Math.abs(viewLeft) + Math.abs(wsRight) - x, 0);
+              }
+              break;
+            case Blockly.BLKS_VERTICAL:
+              if (y < wsBottom) {
+                blk.moveBy(0, Math.abs(viewTop) + Math.abs(wsBottom) - y);
+              }
+              break;
+          }
+        }
+      }
+    }
+	//layer
   }
 
   // Sort by Category.
@@ -686,6 +782,46 @@ Blockly.showContextMenu_ = function(e) {
     else if (Blockly.workspace_arranged_latest_position === Blockly.BLKS_VERTICAL)
       arrangeOptionV.callback();
   }
+  
+  // Sort by Layer.
+  /*var sortOptionLay = {enabled: (Blockly.workspace_arranged_type !== "SortByLayer")};
+  sortOptionLay.text = "Sort by Layer";
+  sortOptionLay.callback = function() {
+    Blockly.workspace_arranged_type = "SortByLayer";
+    rearrangeWorkspace();
+  };
+  options.push(sortOptionLay);*/
+
+  Blockly.dosortByLayerLabel = function() {
+    Blockly.workspace_arranged_type = "SortByLayer";
+    rearrangeWorkspace();
+  };
+
+  Blockly.dosortByC = function() {
+    Blockly.workspace_arranged_type = Blockly.BLKS_CATEGORY;
+    rearrangeWorkspace();
+  };
+  
+  // Show by Layer.
+  var layertoshow;
+  Blockly.doshowLayerBlock = function() {
+    Blockly.workspace_arranged_type = "ShowLayer";
+    layertoshow=Blockly.LayerView;
+    rearrangeWorkspace();
+  };
+  Blockly.doshowLayerBlockwithother = function() {
+    Blockly.workspace_arranged_type = "ShowLayerwithother";
+    layertoshow=Blockly.LayerView;
+    rearrangeWorkspace();
+  };
+
+  var LayerBoxOption = {enabled: (1)};
+  LayerBoxOption.text = "Show LayerBox";
+  LayerBoxOption.callback = function() {
+    Blockly.LayerBoxInit();
+  };
+  options.push(LayerBoxOption);
+  //layer
 
   // Option to get help.
   var helpOption = {enabled: false};
